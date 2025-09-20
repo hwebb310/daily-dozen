@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Dozen - Life Areas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Daily Dozen</h1>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span class="progress-text" id="progressText">0/12 completed</span>
+            </div>
+            <button class="reset-btn" id="resetBtn">🔄 Reset Day</button>
+        </header>
+
+        <main class="life-areas">
+            <div class="life-area" data-area="work">
+                <h2>💼 Work</h2>
+                <div class="tasks">
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="work-1">
+                        <textarea class="task-input" placeholder="Enter work task..." data-task="work-1" rows="1"></textarea>
+                        <label for="work-1" class="task-label"></label>
+                    </div>
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="work-2">
+                        <textarea class="task-input" placeholder="Enter work task..." data-task="work-2" rows="1"></textarea>
+                        <label for="work-2" class="task-label"></label>
+                    </div>
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="work-3">
+                        <textarea class="task-input" placeholder="Enter work task..." data-task="work-3" rows="1"></textarea>
+                        <label for="work-3" class="task-label"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="life-area" data-area="personal">
+                <h2>👤 Personal</h2>
+                <div class="tasks">
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="personal-1">
+                        <textarea class="task-input" placeholder="Enter personal task..." data-task="personal-1" rows="1"></textarea>
+                        <label for="personal-1" class="task-label"></label>
+                    </div>
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="personal-2">
+                        <textarea class="task-input" placeholder="Enter personal task..." data-task="personal-2" rows="1"></textarea>
+                        <label for="personal-2" class="task-label"></label>
+                    </div>
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="personal-3">
+                        <textarea class="task-input" placeholder="Enter personal task..." data-task="personal-3" rows="1"></textarea>
+                        <label for="personal-3" class="task-label"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="life-area" data-area="life">
+                <h2>🌱 Life</h2>
+                <div class="tasks">
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="life-1">
+                        <textarea class="task-input" placeholder="Enter life task..." data-task="life-1" rows="1"></textarea>
+                        <label for="life-1" class="task-label"></label>
+                    </div>
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="life-2">
+                        <textarea class="task-input" placeholder="Enter life task..." data-task="life-2" rows="1"></textarea>
+                        <label for="life-2" class="task-label"></label>
+                    </div>
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="life-3">
+                        <textarea class="task-input" placeholder="Enter life task..." data-task="life-3" rows="1"></textarea>
+                        <label for="life-3" class="task-label"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="life-area" data-area="misc">
+                <h2>📝 Misc</h2>
+                <div class="tasks">
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="misc-1">
+                        <textarea class="task-input" placeholder="Enter misc task..." data-task="misc-1" rows="1"></textarea>
+                        <label for="misc-1" class="task-label"></label>
+                    </div>
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="misc-2">
+                        <textarea class="task-input" placeholder="Enter misc task..." data-task="misc-2" rows="1"></textarea>
+                        <label for="misc-2" class="task-label"></label>
+                    </div>
+                    <div class="task">
+                        <input type="checkbox" class="task-checkbox" id="misc-3">
+                        <textarea class="task-input" placeholder="Enter misc task..." data-task="misc-3" rows="1"></textarea>
+                        <label for="misc-3" class="task-label"></label>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <canvas id="fireworksCanvas"></canvas>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // TODO: Replace with your Firebase config
+        const firebaseConfig = {
+            apiKey: "your-api-key-here",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "your-app-id"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        window.db = getFirestore(app);
+
+        // Initialize app after Firebase is ready
+        const script = document.createElement('script');
+        script.src = 'script.js';
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>
