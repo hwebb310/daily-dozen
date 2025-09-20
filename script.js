@@ -4,11 +4,13 @@ class DailyTodoApp {
         this.completedCount = 0;
         this.totalTasks = 12;
         this.userId = this.generateUserId();
+        this.currentDate = new Date();
 
         this.initializeElements();
         this.bindEvents();
         this.setupFireworks();
-        this.initializeFirestore();
+        this.updateDateDisplay();
+        this.initializeApp();
     }
 
     generateUserId() {
@@ -20,39 +22,39 @@ class DailyTodoApp {
         return userId;
     }
 
-    async initializeFirestore() {
-        if (typeof window.db === 'undefined') {
-            console.log('Firebase not configured, falling back to localStorage');
-            this.tasks = this.loadTasksFromLocalStorage();
-            this.updateProgress();
-            this.loadTaskStates();
-            this.checkForNewDay();
-            return;
-        }
-
-        try {
-            await this.loadTasksFromFirestore();
-            this.updateProgress();
-            this.loadTaskStates();
-            this.checkForNewDay();
-        } catch (error) {
-            console.error('Firestore error, falling back to localStorage:', error);
-            this.tasks = this.loadTasksFromLocalStorage();
-            this.updateProgress();
-            this.loadTaskStates();
-            this.checkForNewDay();
-        }
+    async initializeApp() {
+        console.log('📅 Loading tasks for:', this.getDateKey());
+        this.tasks = this.loadTasksFromLocalStorage();
+        this.updateProgress();
+        this.loadTaskStates();
+        this.checkForNewDay();
     }
 
     initializeElements() {
         this.progressFill = document.getElementById('progressFill');
         this.progressText = document.getElementById('progressText');
         this.resetBtn = document.getElementById('resetBtn');
+        this.currentDateElement = document.getElementById('currentDate');
         this.fireworksCanvas = document.getElementById('fireworksCanvas');
         this.ctx = this.fireworksCanvas.getContext('2d');
 
         this.resizeCanvas();
         window.addEventListener('resize', () => this.resizeCanvas());
+    }
+
+    updateDateDisplay() {
+        const options = {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        };
+        const formattedDate = this.currentDate.toLocaleDateString('en-US', options);
+        this.currentDateElement.textContent = `- ${formattedDate}`;
+    }
+
+    getDateKey() {
+        return this.currentDate.toDateString();
     }
 
     bindEvents() {
@@ -274,57 +276,23 @@ class DailyTodoApp {
         this.saveTasks();
     }
 
-    async loadTasksFromFirestore() {
-        if (!window.db) return {};
-
-        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-
-        const today = new Date().toDateString();
-        const docRef = doc(window.db, 'dailyTodos', `${this.userId}_${today}`);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            this.tasks = docSnap.data().tasks || {};
-        } else {
-            this.tasks = {};
-        }
-    }
-
-    async saveTasksToFirestore() {
-        if (!window.db) {
-            this.saveTasksToLocalStorage();
-            return;
-        }
-
-        try {
-            const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-
-            const today = new Date().toDateString();
-            const docRef = doc(window.db, 'dailyTodos', `${this.userId}_${today}`);
-
-            await setDoc(docRef, {
-                tasks: this.tasks,
-                lastUpdated: new Date(),
-                userId: this.userId
-            });
-        } catch (error) {
-            console.error('Error saving to Firestore:', error);
-            this.saveTasksToLocalStorage();
-        }
-    }
 
     loadTasksFromLocalStorage() {
-        const saved = localStorage.getItem('dailyTodoTasks');
+        const dateKey = this.getDateKey();
+        const storageKey = `dailyTodoTasks_${dateKey}`;
+        const saved = localStorage.getItem(storageKey);
         return saved ? JSON.parse(saved) : {};
     }
 
     saveTasksToLocalStorage() {
-        localStorage.setItem('dailyTodoTasks', JSON.stringify(this.tasks));
-        localStorage.setItem('dailyTodoLastSave', new Date().toDateString());
+        const dateKey = this.getDateKey();
+        const storageKey = `dailyTodoTasks_${dateKey}`;
+        localStorage.setItem(storageKey, JSON.stringify(this.tasks));
+        localStorage.setItem('dailyTodoLastSave', dateKey);
     }
 
     async saveTasks() {
-        await this.saveTasksToFirestore();
+        this.saveTasksToLocalStorage();
     }
 
     loadTaskStates() {
